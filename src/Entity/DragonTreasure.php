@@ -54,6 +54,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationItemsPerPage: 10,
 )]
 #[ApiFilter(PropertyFilter::class)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'owner.username' => 'partial',
+])]
 class DragonTreasure
 {
     #[ORM\Id]
@@ -78,7 +81,7 @@ class DragonTreasure
      * The estimated value of this treasure, in gold coins.
      */
     #[ORM\Column]
-    #[Groups(['treasure:read', 'treasure:write', 'user:read'])]
+    #[Groups(['treasure:read', 'treasure:write', 'user:read', 'user:write'])]
     #[ApiFilter(RangeFilter::class)]
     #[Assert\GreaterThanOrEqual(0)]
     private ?int $value = 0;
@@ -100,6 +103,7 @@ class DragonTreasure
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['treasure:read', 'treasure:write'])]
     #[Assert\Valid]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?User $owner = null;
 
     public function __construct(string $name = null)
@@ -144,7 +148,7 @@ class DragonTreasure
         return $this;
     }
 
-    #[Groups(['treasure:write'])]
+    #[Groups(['treasure:write', 'user:write'])]
     #[SerializedName('description')]
     public function setTextDescription(string $description): self
     {
