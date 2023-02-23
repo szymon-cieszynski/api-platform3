@@ -55,6 +55,8 @@ final class DragonTreasureFactory extends ModelFactory
             'name' => self::faker()->text(255),
             'plunderedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'value' => self::faker()->randomNumber(),
+            //new user each time when new dragon treasure is creating and then relate them..
+            'owner' => UserFactory::new()
         ];
     }
 
